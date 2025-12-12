@@ -76,16 +76,59 @@ const LearnerSubmissions = [
   }
 ];
 
+function DateConversion (DateString){       //helper function converts (str date) to (num array)
+    const DateArray = DateString.split('-').map(Number)
+    return DateArray 
+}
+
+
 function getLearnerData(course, ag, submissions) {
   // here, we would process this data to achieve the desired result.
-  for (let i of submissions){
-    console.log(i.learner_id)
+  current_id = submissions[0].learner_id
+  let learnerGrade =0
+  let assignmentGrade = 0
+  const classId = ag.assignments
+
+  for (let i of submissions){       //for obj i of submissions
+
+    matchingAssignment = ag.assignments.find(assignments => assignments.id === i.assignment_id)
+
+    // for (j in of ag){
+
+    //     }
+    // console.log( i.submission.submitted_at)
+    sDate = DateConversion(i.submission.submitted_at)
+    aDate = DateConversion(matchingAssignment.due_at)
+    console.log(sDate,aDate)
+    
+
+    
+    if (current_id ==i.learner_id ){     //compares global current id to local id
+        learnerGrade += i.submission.score      //adds learners score to global score
+        assignmentGrade+=matchingAssignment.points_possible
+        avg = learnerGrade/assignmentGrade
+
+    }
+    // console.log(i.assignment_id)
+    // console.log(ag.assignments.find(assignments => assignments.id === i.assignment_id).points_possible) 
+    // console.log(avg)
+
+    // console.log(learnerGrade)
+//     AssignmentGrade = 
+//     console.log(learnerGrade)
+    // for (i of submissions){
+    //     if (i.learner_id = c)
+    // }
+    // for (i of submissions){
+    //     tot +=i.submission.score
+
+    // }
   }
 
 
 
 
-
+//   return result;
 
 
  }
