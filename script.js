@@ -80,6 +80,18 @@ function DateConversion (DateString){       //helper function converts (str date
     const DateArray = DateString.split('-').map(Number)
     return DateArray 
 }
+function DateValidation (studentDate,subDate){
+    studentDate = DateConversion(studentDate);
+    subDate = DateConversion(subDate);
+    for (let i = 0;i<studentDate.length;i++){
+        if (studentDate[i]>subDate[i]){
+            return false;
+
+        }
+    }
+    return true
+}
+console.log(DateValidation(sDate,aDate))
 
 
 function getLearnerData(course, ag, submissions) {
@@ -97,9 +109,9 @@ function getLearnerData(course, ag, submissions) {
 
     //     }
     // console.log( i.submission.submitted_at)
-    sDate = DateConversion(i.submission.submitted_at)
-    aDate = DateConversion(matchingAssignment.due_at)
-    console.log(sDate,aDate)
+    sDate = (i.submission.submitted_at)
+    aDate = (matchingAssignment.due_at)
+    console.log(DateValidation(sDate,aDate))
     
 
     
