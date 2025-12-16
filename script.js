@@ -94,9 +94,11 @@ function DateValidation(studentDate, subDate) { //validates if submission is on 
 
 
     for (let i = 0; i < studentDate.length; i++) {
+        //assignment is late if submission date is after assignment due date
         if (studentDate[i] > subDate[i]) {
             return 'Late';
         }
+        //only checks the first value in array, the year to check if assignment is submitted early
         if (subDate[0] > studentDate[0]) {
             return 'Early';
         }
@@ -110,19 +112,19 @@ function getLearnerData(course, ag, submissions) {
         if (course.id!=ag.course_id){ // Throw error if courseInfo ID and assignmentGroup ID are mismatched
             throw new Error(`Assignment Group does not belong to course, mismatch IDs`);
         }
-        // here, we would process this data to achieve the desired result
+        
         let learnerGrade = 0;
         let assignmentGrade = 0;
         let assignGrade = 0;
         let learnerSumGrade = 0;
         let assignmentSumGrade = 0;
-        const classId = ag.assignments;
-        output = [];
+        output = []; //Initialized the output array
+
         for (let i of submissions) { 
 
             current_id = i.learner_id
              matchingAssignment = ag.assignments.find(assignments => assignments.id === i.assignment_id)
-            if (!matchingAssignment){
+            if (!matchingAssignment){ //Error thrown if assigment Id doesn't exist in ag
                 throw new Error(`Assignment ID ${i.assignment_id} does not exist`)
             }
             let userObject = output.find(s => s.id === current_id)
@@ -131,12 +133,15 @@ function getLearnerData(course, ag, submissions) {
             let aDate = matchingAssignment.due_at
             let flag = DateValidation(sDate, aDate)
 
+            //resets and initializes the object per user
             if (!userObject) {
                 userObject = {}
                 output.push(userObject)
                 assignmentSumGrade = 0
                 learnerSumGrade = 0
             }
+            //Main logic: populates the objects based on assigment ID
+            //if statement runs if user assignment id and learner submission id match  and assignment is submitted the same year
             if (current_id == i.learner_id && flag != 'Early') {
 
                 //compares global current id to local id
@@ -144,21 +149,21 @@ function getLearnerData(course, ag, submissions) {
                 if (matchingAssignment.points_possible<=0){
                     throw new Error(`Possible points for assignment cannot be 0 or lower`)
                 }
-                 assignmentGrade = matchingAssignment.points_possible
+                assignmentGrade = matchingAssignment.points_possible
+                //flag handles conditionals based whether assignment is on time
                 if (flag == 'Late') {
                     learnerGrade -= (assignmentGrade * .10)
                 }
-                // console.log('---------',learnerGrade,assignmentGrade,learnerGrade/assignmentGrade,'--------')
+                //Calculations to find avg of each and all assignments
                 assignGrade = learnerGrade / assignmentGrade
                 learnerSumGrade += learnerGrade      //adds learners score to global score
                 assignmentSumGrade += assignmentGrade
                 avg = learnerSumGrade / assignmentSumGrade
 
-                let userAssignment = i.assignment_id;
-
+                //populating the user object
                 userObject.id = current_id;
                 userObject.avg = avg;
-                userObject[userAssignment] = assignGrade;
+                userObject[i.assignment_id] = assignGrade;
 
             }
 
