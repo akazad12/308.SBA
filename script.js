@@ -80,65 +80,73 @@ function DateConversion (DateString){       //helper function converts (str date
     const DateArray = DateString.split('-').map(Number)
     return DateArray 
 }
-function DateValidation (studentDate,subDate){
+function DateValidation (studentDate,subDate){ //validates if submission is on time or too early or late
+
+    // Converts the student submission and the assignment submission dates to arrays
     studentDate = DateConversion(studentDate);
     subDate = DateConversion(subDate);
-    for (let i = 0;i<studentDate.length;i++){
-        if (studentDate[i]>subDate[i]){
-            return false;
 
+    
+    for (let i = 0;i<studentDate.length;i++){
+        if (studentDate[i]>subDate[i] ){
+            return 'Late';
+        }
+        if (subDate[0]>studentDate[0]){
+            return 'Early'
         }
     }
     return true
 }
-console.log(DateValidation(sDate,aDate))
 
 
 function getLearnerData(course, ag, submissions) {
   // here, we would process this data to achieve the desired result.
-  current_id = submissions[0].learner_id
+//   current_id = submissions[tag].learner_id
   let learnerGrade =0
   let assignmentGrade = 0
   const classId = ag.assignments
-
+  object = []
   for (let i of submissions){       //for obj i of submissions
 
+    current_id = i.learner_id
     matchingAssignment = ag.assignments.find(assignments => assignments.id === i.assignment_id)
+    userObject = object.find(s => s.id === current_id)
 
-    // for (j in of ag){
-
-    //     }
-    // console.log( i.submission.submitted_at)
     sDate = (i.submission.submitted_at)
     aDate = (matchingAssignment.due_at)
-    console.log(DateValidation(sDate,aDate))
-    
+    flag = DateValidation(sDate,aDate)
 
-    
-    if (current_id ==i.learner_id ){     //compares global current id to local id
-        learnerGrade += i.submission.score      //adds learners score to global score
-        assignmentGrade+=matchingAssignment.points_possible
+    if (!userObject){
+        console.log('student Not found')
+        userObject ={}
+    }
+     if (current_id ==i.learner_id && flag!='Early'){
+
+          //compares global current id to local id
+        learnerGrade = i.submission.score 
+        assignmentGrade = matchingAssignment.points_possible
+        if (flag == false){
+            assignmentGrade -=10
+        }
+        assignGrade = learnerGrade/assignmentGrade
+        learnerGrade += learnerGrade      //adds learners score to global score
+        assignmentGrade+=assignmentGrade
         avg = learnerGrade/assignmentGrade
 
+         
+        x= i.assignment_id
+
+        userObject.id = current_id
+        userObject.avg = avg
+        userObject[x] = assignGrade
+        object.push(userObject)
+        // console.log(userObject)
+
     }
-    // console.log(i.assignment_id)
-    // console.log(ag.assignments.find(assignments => assignments.id === i.assignment_id).points_possible) 
-    // console.log(avg)
-
-    // console.log(learnerGrade)
-//     AssignmentGrade = 
-//     console.log(learnerGrade)
-    // for (i of submissions){
-    //     if (i.learner_id = c)
-    // }
-    // for (i of submissions){
-    //     tot +=i.submission.score
-
-    // }
+    console.log(userObject)
   }
 
-
-
+     console.log(object)
 
 //   return result;
 
@@ -154,6 +162,7 @@ const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
 //       avg: 0.985, // (47 + 150) / (50 + 150)
 //       1: 0.94, // 47 / 50
 //       2: 1.0 // 150 / 150
+
 //     },
 //     {
 //       id: 132,
