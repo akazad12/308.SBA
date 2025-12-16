@@ -89,12 +89,15 @@ function DateValidation (studentDate,subDate){ //validates if submission is on t
     
     for (let i = 0;i<studentDate.length;i++){
         if (studentDate[i]>subDate[i] ){
+            console.log('late')
             return 'Late';
         }
         if (subDate[0]>studentDate[0]){
+            console.log('early')
             return 'Early'
         }
     }
+    console.log('on time')
     return true
 }
 
@@ -104,6 +107,9 @@ function getLearnerData(course, ag, submissions) {
 //   current_id = submissions[tag].learner_id
   let learnerGrade =0
   let assignmentGrade = 0
+  let assignGrade = 0
+  let learnerSumGrade = 0
+  let assignmentSumGrade = 0
   const classId = ag.assignments
   output = []
   for (let i of submissions){       //for obj i of submissions
@@ -117,24 +123,25 @@ function getLearnerData(course, ag, submissions) {
     flag = DateValidation(sDate,aDate)
 
     if (!userObject){
-        console.log('student Not found')
         userObject ={}
-        console.log('---------------')
-        output.push(userObject)
+        output.push(userObject);
+        assignmentSumGrade =0
+        learnerSumGrade = 0
     }
     if (current_id ==i.learner_id && flag!='Early'){
 
         //compares global current id to local id
-        learnerGrade = i.submission.score 
+        learnerGrade= i.submission.score 
         assignmentGrade = matchingAssignment.points_possible
-        if (flag == false){
-            assignmentGrade -=10
+        if (flag == 'Late'){
+            console.log(assignmentGrade*.10)
+            learnerGrade -=(assignmentGrade*.10)
         }
+        // console.log('---------',learnerGrade,assignmentGrade,learnerGrade/assignmentGrade,'--------')
         assignGrade = learnerGrade/assignmentGrade
-        learnerGrade += learnerGrade      //adds learners score to global score
-        assignmentGrade+=assignmentGrade
-        avg = learnerGrade/assignmentGrade
-
+        learnerSumGrade += learnerGrade      //adds learners score to global score
+        assignmentSumGrade+=assignmentGrade
+        avg = learnerSumGrade/assignmentSumGrade
          
         userAssignment= i.assignment_id
 
@@ -143,6 +150,7 @@ function getLearnerData(course, ag, submissions) {
         userObject[userAssignment] = assignGrade
 
     }
+   
   }
 
      console.log(output)
