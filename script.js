@@ -105,12 +105,12 @@ function getLearnerData(course, ag, submissions) {
   let learnerGrade =0
   let assignmentGrade = 0
   const classId = ag.assignments
-  object = []
+  output = []
   for (let i of submissions){       //for obj i of submissions
 
     current_id = i.learner_id
     matchingAssignment = ag.assignments.find(assignments => assignments.id === i.assignment_id)
-    userObject = object.find(s => s.id === current_id)
+    userObject = output.find(s => s.id === current_id)
 
     sDate = (i.submission.submitted_at)
     aDate = (matchingAssignment.due_at)
@@ -119,10 +119,12 @@ function getLearnerData(course, ag, submissions) {
     if (!userObject){
         console.log('student Not found')
         userObject ={}
+        console.log('---------------')
+        output.push(userObject)
     }
     if (current_id ==i.learner_id && flag!='Early'){
 
-          //compares global current id to local id
+        //compares global current id to local id
         learnerGrade = i.submission.score 
         assignmentGrade = matchingAssignment.points_possible
         if (flag == false){
@@ -138,17 +140,12 @@ function getLearnerData(course, ag, submissions) {
 
         userObject.id = current_id
         userObject.avg = avg
-        userObject[userAssign] = assignGrade
-        // object.push(userObject)
-        console.log(userAssign)
+        userObject[userAssignment] = assignGrade
 
     }
-    userAssign+=1
-    current_id= userObject
-    console.log(userObject)
   }
 
-     console.log(object)
+     console.log(output)
 
 //   return result;
 
