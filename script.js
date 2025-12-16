@@ -77,8 +77,14 @@ const LearnerSubmissions = [
 ];
 
 function DateConversion(DateString) {       //helper function converts (str date) to (num array)
-    const DateArray = DateString.split('-').map(Number)
-    return DateArray
+     if (typeof DateString !== 'string'){
+        throw new Error('Date is not in string format');
+}
+    const DateArray = DateString.split('-').map(Number);
+    if (DateArray.length!=3){
+        throw new Error('Date format is incorrect');
+    }
+    return DateArray;
 }
 function DateValidation(studentDate, subDate) { //validates if submission is on time or too early or late
 
@@ -92,37 +98,42 @@ function DateValidation(studentDate, subDate) { //validates if submission is on 
             return 'Late';
         }
         if (subDate[0] > studentDate[0]) {
-            return 'Early'
+            return 'Early';
         }
     }
-    return true
+    return true;
 }
 
 
 function getLearnerData(course, ag, submissions) {
-    try {
-        // here, we would process this data to achieve the desired result.
-        //   current_id = submissions[tag].learner_id
-        let learnerGrade = 0
-        let assignmentGrade = 0
-        let assignGrade = 0
-        let learnerSumGrade = 0
-        let assignmentSumGrade = 0
-        const classId = ag.assignments
-        output = []
-        for (let i of submissions) {       //for obj i of submissions
+    try { //Exception Handling
+        if (course.id!=ag.course_id){ // Throw error if courseInfo ID and assignmentGroup ID are mismatched
+            throw new Error(`Assignment Group does not belong to course, mismatch IDs`);
+        }
+        // here, we would process this data to achieve the desired result
+        let learnerGrade = 0;
+        let assignmentGrade = 0;
+        let assignGrade = 0;
+        let learnerSumGrade = 0;
+        let assignmentSumGrade = 0;
+        const classId = ag.assignments;
+        output = [];
+        for (let i of submissions) { 
 
             current_id = i.learner_id
-            matchingAssignment = ag.assignments.find(assignments => assignments.id === i.assignment_id)
-            userObject = output.find(s => s.id === current_id)
+             matchingAssignment = ag.assignments.find(assignments => assignments.id === i.assignment_id)
+            if (!matchingAssignment){
+                throw new Error(`Assignment ID ${i.assignment_id} does not exist`)
+            }
+            let userObject = output.find(s => s.id === current_id)
 
-            sDate = (i.submission.submitted_at)
-            aDate = (matchingAssignment.due_at)
-            flag = DateValidation(sDate, aDate)
+            let sDate = i.submission.submitted_at
+            let aDate = matchingAssignment.due_at
+            let flag = DateValidation(sDate, aDate)
 
             if (!userObject) {
                 userObject = {}
-                output.push(userObject);
+                output.push(userObject)
                 assignmentSumGrade = 0
                 learnerSumGrade = 0
             }
@@ -130,7 +141,10 @@ function getLearnerData(course, ag, submissions) {
 
                 //compares global current id to local id
                 learnerGrade = i.submission.score
-                assignmentGrade = matchingAssignment.points_possible
+                if (matchingAssignment.points_possible<=0){
+                    throw new Error(`Possible points for assignment cannot be 0 or lower`)
+                }
+                 assignmentGrade = matchingAssignment.points_possible
                 if (flag == 'Late') {
                     learnerGrade -= (assignmentGrade * .10)
                 }
@@ -140,18 +154,18 @@ function getLearnerData(course, ag, submissions) {
                 assignmentSumGrade += assignmentGrade
                 avg = learnerSumGrade / assignmentSumGrade
 
-                userAssignment = i.assignment_id
+                let userAssignment = i.assignment_id;
 
-                userObject.id = current_id
-                userObject.avg = avg
-                userObject[userAssignment] = assignGrade
+                userObject.id = current_id;
+                userObject.avg = avg;
+                userObject[userAssignment] = assignGrade;
 
             }
 
         }
         return output;
     } catch (err) {
-        console.log(`Error: ${err.message}`)
+        console.log(`Error: ${err.message}`);
     }
 
 }
@@ -160,7 +174,7 @@ function getLearnerData(course, ag, submissions) {
 
 
 const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
-console.log(result)
+console.log(result);
 
 // console.log(result);
 
