@@ -120,7 +120,7 @@ function getLearnerData(course, ag, submissions) {
         console.log('student Not found')
         userObject ={}
     }
-     if (current_id ==i.learner_id && flag!='Early'){
+    if (current_id ==i.learner_id && flag!='Early'){
 
           //compares global current id to local id
         learnerGrade = i.submission.score 
@@ -134,15 +134,17 @@ function getLearnerData(course, ag, submissions) {
         avg = learnerGrade/assignmentGrade
 
          
-        x= i.assignment_id
+        userAssignment= i.assignment_id
 
         userObject.id = current_id
         userObject.avg = avg
-        userObject[x] = assignGrade
-        object.push(userObject)
-        // console.log(userObject)
+        userObject[userAssign] = assignGrade
+        // object.push(userObject)
+        console.log(userAssign)
 
     }
+    userAssign+=1
+    current_id= userObject
     console.log(userObject)
   }
 
