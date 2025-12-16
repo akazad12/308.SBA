@@ -1,165 +1,166 @@
 // The provided course information.
 const CourseInfo = {
-  id: 451,
-  name: "Introduction to JavaScript"
+    id: 451,
+    name: "Introduction to JavaScript"
 };
 
 // The provided assignment group.
 const AssignmentGroup = {
-  id: 12345,
-  name: "Fundamentals of JavaScript",
-  course_id: 451,
-  group_weight: 25,
-  assignments: [
-    {
-      id: 1,
-      name: "Declare a Variable",
-      due_at: "2023-01-25",
-      points_possible: 50
-    },
-    {
-      id: 2,
-      name: "Write a Function",
-      due_at: "2023-02-27",
-      points_possible: 150
-    },
-    {
-      id: 3,
-      name: "Code the World",
-      due_at: "3156-11-15",
-      points_possible: 500
-    }
-  ]
+    id: 12345,
+    name: "Fundamentals of JavaScript",
+    course_id: 451,
+    group_weight: 25,
+    assignments: [
+        {
+            id: 1,
+            name: "Declare a Variable",
+            due_at: "2023-01-25",
+            points_possible: 50
+        },
+        {
+            id: 2,
+            name: "Write a Function",
+            due_at: "2023-02-27",
+            points_possible: 150
+        },
+        {
+            id: 3,
+            name: "Code the World",
+            due_at: "3156-11-15",
+            points_possible: 500
+        }
+    ]
 };
 
 // The provided learner submission data.
 const LearnerSubmissions = [
-  {
-    learner_id: 125,
-    assignment_id: 1,
-    submission: {
-      submitted_at: "2023-01-25",
-      score: 47
+    {
+        learner_id: 125,
+        assignment_id: 1,
+        submission: {
+            submitted_at: "2023-01-25",
+            score: 47
+        }
+    },
+    {
+        learner_id: 125,
+        assignment_id: 2,
+        submission: {
+            submitted_at: "2023-02-12",
+            score: 150
+        }
+    },
+    {
+        learner_id: 125,
+        assignment_id: 3,
+        submission: {
+            submitted_at: "2023-01-25",
+            score: 400
+        }
+    },
+    {
+        learner_id: 132,
+        assignment_id: 1,
+        submission: {
+            submitted_at: "2023-01-24",
+            score: 39
+        }
+    },
+    {
+        learner_id: 132,
+        assignment_id: 2,
+        submission: {
+            submitted_at: "2023-03-07",
+            score: 140
+        }
     }
-  },
-  {
-    learner_id: 125,
-    assignment_id: 2,
-    submission: {
-      submitted_at: "2023-02-12",
-      score: 150
-    }
-  },
-  {
-    learner_id: 125,
-    assignment_id: 3,
-    submission: {
-      submitted_at: "2023-01-25",
-      score: 400
-    }
-  },
-  {
-    learner_id: 132,
-    assignment_id: 1,
-    submission: {
-      submitted_at: "2023-01-24",
-      score: 39
-    }
-  },
-  {
-    learner_id: 132,
-    assignment_id: 2,
-    submission: {
-      submitted_at: "2023-03-07",
-      score: 140
-    }
-  }
 ];
 
-function DateConversion (DateString){       //helper function converts (str date) to (num array)
+function DateConversion(DateString) {       //helper function converts (str date) to (num array)
     const DateArray = DateString.split('-').map(Number)
-    return DateArray 
+    return DateArray
 }
-function DateValidation (studentDate,subDate){ //validates if submission is on time or too early or late
+function DateValidation(studentDate, subDate) { //validates if submission is on time or too early or late
 
     // Converts the student submission and the assignment submission dates to arrays
     studentDate = DateConversion(studentDate);
     subDate = DateConversion(subDate);
 
-    
-    for (let i = 0;i<studentDate.length;i++){
-        if (studentDate[i]>subDate[i] ){
-            console.log('late')
+
+    for (let i = 0; i < studentDate.length; i++) {
+        if (studentDate[i] > subDate[i]) {
             return 'Late';
         }
-        if (subDate[0]>studentDate[0]){
-            console.log('early')
+        if (subDate[0] > studentDate[0]) {
             return 'Early'
         }
     }
-    console.log('on time')
     return true
 }
 
 
 function getLearnerData(course, ag, submissions) {
-  // here, we would process this data to achieve the desired result.
-//   current_id = submissions[tag].learner_id
-  let learnerGrade =0
-  let assignmentGrade = 0
-  let assignGrade = 0
-  let learnerSumGrade = 0
-  let assignmentSumGrade = 0
-  const classId = ag.assignments
-  output = []
-  for (let i of submissions){       //for obj i of submissions
+    try {
+        // here, we would process this data to achieve the desired result.
+        //   current_id = submissions[tag].learner_id
+        let learnerGrade = 0
+        let assignmentGrade = 0
+        let assignGrade = 0
+        let learnerSumGrade = 0
+        let assignmentSumGrade = 0
+        const classId = ag.assignments
+        output = []
+        for (let i of submissions) {       //for obj i of submissions
 
-    current_id = i.learner_id
-    matchingAssignment = ag.assignments.find(assignments => assignments.id === i.assignment_id)
-    userObject = output.find(s => s.id === current_id)
+            current_id = i.learner_id
+            matchingAssignment = ag.assignments.find(assignments => assignments.id === i.assignment_id)
+            userObject = output.find(s => s.id === current_id)
 
-    sDate = (i.submission.submitted_at)
-    aDate = (matchingAssignment.due_at)
-    flag = DateValidation(sDate,aDate)
+            sDate = (i.submission.submitted_at)
+            aDate = (matchingAssignment.due_at)
+            flag = DateValidation(sDate, aDate)
 
-    if (!userObject){
-        userObject ={}
-        output.push(userObject);
-        assignmentSumGrade =0
-        learnerSumGrade = 0
-    }
-    if (current_id ==i.learner_id && flag!='Early'){
+            if (!userObject) {
+                userObject = {}
+                output.push(userObject);
+                assignmentSumGrade = 0
+                learnerSumGrade = 0
+            }
+            if (current_id == i.learner_id && flag != 'Early') {
 
-        //compares global current id to local id
-        learnerGrade= i.submission.score 
-        assignmentGrade = matchingAssignment.points_possible
-        if (flag == 'Late'){
-            console.log(assignmentGrade*.10)
-            learnerGrade -=(assignmentGrade*.10)
+                //compares global current id to local id
+                learnerGrade = i.submission.score
+                assignmentGrade = matchingAssignment.points_possible
+                if (flag == 'Late') {
+                    learnerGrade -= (assignmentGrade * .10)
+                }
+                // console.log('---------',learnerGrade,assignmentGrade,learnerGrade/assignmentGrade,'--------')
+                assignGrade = learnerGrade / assignmentGrade
+                learnerSumGrade += learnerGrade      //adds learners score to global score
+                assignmentSumGrade += assignmentGrade
+                avg = learnerSumGrade / assignmentSumGrade
+
+                userAssignment = i.assignment_id
+
+                userObject.id = current_id
+                userObject.avg = avg
+                userObject[userAssignment] = assignGrade
+
+            }
+
         }
-        // console.log('---------',learnerGrade,assignmentGrade,learnerGrade/assignmentGrade,'--------')
-        assignGrade = learnerGrade/assignmentGrade
-        learnerSumGrade += learnerGrade      //adds learners score to global score
-        assignmentSumGrade+=assignmentGrade
-        avg = learnerSumGrade/assignmentSumGrade
-         
-        userAssignment= i.assignment_id
-
-        userObject.id = current_id
-        userObject.avg = avg
-        userObject[userAssignment] = assignGrade
-
+        return output;
+    } catch (err) {
+        console.log(`Error: ${err.message}`)
     }
-   
-  }
 
-     console.log(output)
-
-//   return result;
+}
 
 
- }
+
+
 const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
+console.log(result)
 
 // console.log(result);
 
