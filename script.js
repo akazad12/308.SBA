@@ -108,6 +108,7 @@ function DateValidation(studentDate, subDate) { //validates if submission is on 
 
 
 function getLearnerData(course, ag, submissions) {
+    output = []; //Initialized the output array
     try { //Exception Handling
         if (course.id!=ag.course_id){ // Throw error if courseInfo ID and assignmentGroup ID are mismatched
             throw new Error(`Assignment Group does not belong to course, mismatch IDs`);
@@ -118,7 +119,7 @@ function getLearnerData(course, ag, submissions) {
         let assignGrade = 0;
         let learnerSumGrade = 0;
         let assignmentSumGrade = 0;
-        output = []; //Initialized the output array
+    
 
         for (let i of submissions) { 
 
@@ -166,6 +167,9 @@ function getLearnerData(course, ag, submissions) {
                 userObject[i.assignment_id] = assignGrade;
 
             }
+            else{
+                continue;
+        }
 
         }
         return output;
